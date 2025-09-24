@@ -13,21 +13,37 @@ set CURRENT_DIR=%cd%
 echo === DB Example Setup and Run Script ===
 echo Current directory: %CURRENT_DIR%
 echo Project directory: %PROJECT_DIR%
+echo SCRIPT_DIR: %SCRIPT_DIR%
+echo.
 
+echo DEBUG: Press any key to continue after reviewing paths above...
+pause
+
+echo DEBUG: Checking if project directory exists...
 REM Check if project directory exists
 if not exist "%PROJECT_DIR%" (
     echo Error: Project directory %PROJECT_DIR% does not exist!
     echo Please run this script from the db_example project directory
+    pause
     exit /b 1
+) else (
+    echo DEBUG: Project directory exists
 )
 
+echo.
+echo DEBUG: Checking if conda is available...
 REM Check if conda is available
 conda --version >nul 2>&1
 if errorlevel 1 (
     echo Error: conda is not available in PATH
     echo Please ensure conda is installed and initialized
     echo You may need to run 'conda init cmd.exe' and restart your command prompt
+    echo.
+    echo DEBUG: Try running 'conda --version' manually to see the error
+    pause
     exit /b 1
+) else (
+    echo DEBUG: conda is available
 )
 
 echo.
