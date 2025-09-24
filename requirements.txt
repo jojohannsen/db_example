@@ -3,4 +3,3 @@ langchain-community
 langchain-anthropic
 pydantic
 sqlalchemy
-sqlite3
