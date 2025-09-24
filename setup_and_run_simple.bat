@@ -33,58 +33,34 @@ if not exist "runit.sh" (
 echo Found required files: requirements.txt and runit.sh
 echo.
 
-echo Checking if conda is available...
-conda --version
+echo Checking if Python is available...
+python --version
 if errorlevel 1 (
-    echo Error: conda is not available
-    echo Please install Anaconda or Miniconda and restart your command prompt
+    echo Error: Python is not available
+    echo Please install Python and add it to your PATH
     echo.
     pause
     exit /b 1
 )
 
 echo.
-echo === Step 1: Creating conda environment '%ENV_NAME%' ===
-
-REM Remove existing environment if it exists
-conda env list | findstr "%ENV_NAME%"
-if not errorlevel 1 (
-    echo Environment '%ENV_NAME%' already exists. Removing it...
-    conda env remove -n "%ENV_NAME%" -y
-)
-
-REM Create new environment
-echo Creating new conda environment with Python 3.12...
-conda create -n "%ENV_NAME%" python=3.12 -y
-if errorlevel 1 (
-    echo Error: Failed to create conda environment
-    pause
-    exit /b 1
-)
-
-echo.
-echo === Step 2: Installing requirements ===
-call conda activate "%ENV_NAME%"
-if errorlevel 1 (
-    echo Error: Failed to activate conda environment
-    pause
-    exit /b 1
-)
-
+echo === Step 1: Installing requirements ===
+echo Installing Python packages from requirements.txt...
 pip install -r requirements.txt
 if errorlevel 1 (
     echo Error: Failed to install requirements
+    echo Make sure pip is available and working
     pause
     exit /b 1
 )
 
 echo.
-echo === Step 3: Setting up working directory ===
+echo === Step 2: Setting up working directory ===
 if not exist "%WORK_DIR%" mkdir "%WORK_DIR%"
 echo Working directory: %WORK_DIR%
 
 echo.
-echo === Step 4: Running the example ===
+echo === Step 3: Running the example ===
 
 REM Check for API key
 if "%ANTHROPIC_API_KEY%"=="" (
@@ -122,10 +98,8 @@ if not errorlevel 1 (
 
 echo.
 echo === Execution Complete ===
-echo Environment: %ENV_NAME% (active)
 echo Working directory: %WORK_DIR%
 echo.
 echo To run queries: python "%PROJECT_DIR%\query_data.py" "Your question"
-echo To deactivate: conda deactivate
 echo.
 pause
