@@ -91,15 +91,32 @@ if not errorlevel 1 (
     echo Found bash, running runit.sh...
     bash "%PROJECT_DIR%\runit.sh"
 ) else (
-    echo bash not found. Running Python script directly...
-    if exist "%PROJECT_DIR%\chat_with_data.py" (
-        python "%PROJECT_DIR%\chat_with_data.py"
+    echo bash not found. Running database setup and queries directly...
+    echo.
+    echo === Setting up database ===
+    echo Script location: %PROJECT_DIR%
+    echo Working directory: %cd%
+
+    REM Create database tables and fake data (only if db doesn't exist)
+    if not exist "fake.db" (
+        echo Creating database...
+        type "%PROJECT_DIR%\fake_tables.sql" | sqlite3 fake.db
+        type "%PROJECT_DIR%\fake_data.sql" | sqlite3 fake.db
+        echo Database created: %cd%\fake.db
     ) else (
-        echo Error: chat_with_data.py not found
-        echo Please install Git for Windows to run the shell script, or ensure chat_with_data.py exists
-        pause
-        exit /b 1
+        echo Database already exists: %cd%\fake.db
     )
+
+    echo.
+    echo === Running example queries ===
+
+    echo.
+    echo Question: Who did the most inspections?
+    python "%PROJECT_DIR%\query_data.py" "Who did the most inspections?"
+
+    echo.
+    echo Question: What sort of things do we inspect?
+    python "%PROJECT_DIR%\query_data.py" "What sort of things do we inspect?"
 )
 
 echo.
