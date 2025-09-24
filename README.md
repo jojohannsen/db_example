@@ -25,32 +25,72 @@ The system includes four main tables:
 - `fake_tables.sql` - Database schema definition
 - `fake_data.sql` - Sample data insertion
 - `query_data.py` - AI-powered query engine
-- `runit.sh` - Demo script that sets up database and runs example queries
+- `runit.sh` - Demo script that sets up database and runs example queries (Unix/Linux/macOS)
+- `setup_and_run.sh` - Automated setup script with conda environment (Unix/Linux/macOS)
+- `setup_and_run.bat` - Automated setup script using system Python (Windows)
 - `requirements.txt` - Python dependencies
 
 ## Setup Instructions
 
-### 1. Install Dependencies
+### Quick Start (Automated Setup)
 
+**For Unix/Linux/macOS:**
+```bash
+./setup_and_run.sh
+```
+
+**For Windows:**
+```cmd
+setup_and_run.bat
+```
+
+These scripts will automatically:
+1. Set up the Python environment (conda on Unix/Linux/macOS, system Python on Windows)
+2. Install dependencies
+3. Create the database and run example queries
+
+### Manual Setup
+
+#### 1. Install Dependencies
+
+**Unix/Linux/macOS:**
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Set Environment Variables
+**Windows:**
+```cmd
+pip install -r requirements.txt
+```
+
+#### 2. Set Environment Variables
 
 You'll need an Anthropic API key to use Claude:
 
+**Unix/Linux/macOS:**
 ```bash
 export ANTHROPIC_API_KEY="your-api-key-here"
 ```
 
-### 3. Run the Example
+**Windows:**
+```cmd
+set ANTHROPIC_API_KEY=your-api-key-here
+```
 
-The easiest way to get started:
+#### 3. Run the Example
 
+**Unix/Linux/macOS:**
 ```bash
 bash runit.sh
 ```
+
+**Windows (with Git Bash):**
+```bash
+bash runit.sh
+```
+
+**Windows (without Git Bash):**
+The batch script will automatically handle database creation and run queries directly.
 
 This will:
 1. Create the SQLite database (`fake.db`) if it doesn't exist
@@ -62,7 +102,15 @@ This will:
 
 You can ask your own questions:
 
+**Unix/Linux/macOS:**
 ```bash
+python query_data.py "How many products failed inspection?"
+python query_data.py "Which inspector has the highest average scores?"
+python query_data.py "Show me all products from Acme Manufacturing"
+```
+
+**Windows:**
+```cmd
 python query_data.py "How many products failed inspection?"
 python query_data.py "Which inspector has the highest average scores?"
 python query_data.py "Show me all products from Acme Manufacturing"
