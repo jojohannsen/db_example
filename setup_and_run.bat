@@ -32,19 +32,22 @@ if not exist "%PROJECT_DIR%" (
 
 echo.
 echo DEBUG: Checking if conda is available...
-REM Check if conda is available
-conda --version >nul 2>&1
+REM Check if conda is available - let's see the actual output first
+conda --version
 if errorlevel 1 (
     echo Error: conda is not available in PATH
     echo Please ensure conda is installed and initialized
     echo You may need to run 'conda init cmd.exe' and restart your command prompt
     echo.
-    echo DEBUG: Try running 'conda --version' manually to see the error
     pause
     exit /b 1
 ) else (
-    echo DEBUG: conda is available
+    echo DEBUG: conda is available - continuing...
 )
+
+echo.
+echo DEBUG: Press any key to continue to Step 1...
+pause
 
 echo.
 echo === Step 1: Creating conda environment '%ENV_NAME%' ===
