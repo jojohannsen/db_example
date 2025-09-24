@@ -34,17 +34,22 @@ echo.
 echo DEBUG: Checking if conda is available...
 REM Check if conda is available - let's see the actual output first
 conda --version
-if errorlevel 1 (
+echo DEBUG: conda command completed, errorlevel is %errorlevel%
+
+REM Store the errorlevel immediately
+set CONDA_CHECK=%errorlevel%
+echo DEBUG: Stored conda check result: %CONDA_CHECK%
+
+if %CONDA_CHECK% neq 0 (
     echo Error: conda is not available in PATH
     echo Please ensure conda is installed and initialized
     echo You may need to run 'conda init cmd.exe' and restart your command prompt
     echo.
     pause
     exit /b 1
-) else (
-    echo DEBUG: conda is available - continuing...
 )
 
+echo DEBUG: conda is available - continuing...
 echo.
 echo DEBUG: Press any key to continue to Step 1...
 pause
