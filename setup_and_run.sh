@@ -6,7 +6,8 @@
 set -e  # Exit on any error
 
 # Configuration
-PROJECT_DIR="$HOME/code/db_example"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$SCRIPT_DIR"
 ENV_NAME="db_example_env"
 CURRENT_DIR=$(pwd)
 
@@ -17,7 +18,7 @@ echo "Project directory: $PROJECT_DIR"
 # Check if project directory exists
 if [ ! -d "$PROJECT_DIR" ]; then
     echo "Error: Project directory $PROJECT_DIR does not exist!"
-    echo "Please ensure the db_example project is cloned to ~/code/db_example"
+    echo "Please run this script from the db_example project directory"
     exit 1
 fi
 
