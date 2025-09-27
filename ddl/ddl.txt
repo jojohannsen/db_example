@@ -1,0 +1,114 @@
+-- E-commerce Database Schema
+-- Simple online store with customers, products, orders, and reviews
+
+-- Categories table - product categories
+CREATE TABLE categories (
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    parent_category_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_category_id) REFERENCES categories(category_id)
+);
+
+-- Products table - product catalog
+CREATE TABLE products (
+    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(200) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    stock_quantity INT NOT NULL DEFAULT 0,
+    category_id INT NOT NULL,
+    brand VARCHAR(100),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id),
+    INDEX idx_category (category_id),
+    INDEX idx_price (price),
+    INDEX idx_active (is_active)
+);
+
+-- Customers table - customer information
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(20),
+    date_of_birth DATE,
+    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT TRUE,
+    INDEX idx_email (email),
+    INDEX idx_name (last_name, first_name)
+);
+
+-- Addresses table - customer shipping and billing addresses
+CREATE TABLE addresses (
+    address_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    address_type ENUM('shipping', 'billing') NOT NULL,
+    street_address VARCHAR(200) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    state_province VARCHAR(100),
+    postal_code VARCHAR(20),
+    country VARCHAR(100) NOT NULL,
+    is_default BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE,
+    INDEX idx_customer (customer_id),
+    INDEX idx_type (address_type)
+);
+
+-- Orders table - order header information
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    total_amount DECIMAL(10,2) NOT NULL,
+    order_status ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
+    shipping_address_id INT NOT NULL,
+    billing_address_id INT NOT NULL,
+    payment_method ENUM('credit_card', 'debit_card', 'paypal', 'bank_transfer') NOT NULL,
+    shipping_cost DECIMAL(8,2) DEFAULT 0.00,
+    notes TEXT,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (shipping_address_id) REFERENCES addresses(address_id),
+    FOREIGN KEY (billing_address_id) REFERENCES addresses(address_id),
+    INDEX idx_customer (customer_id),
+    INDEX idx_date (order_date),
+    INDEX idx_status (order_status)
+);
+
+-- Order Items table - individual products within orders
+CREATE TABLE order_items (
+    order_item_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id),
+    INDEX idx_order (order_id),
+    INDEX idx_product (product_id)
+);
+
+-- Reviews table - customer product reviews
+CREATE TABLE reviews (
+    review_id INT PRIMARY KEY AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    review_title VARCHAR(200),
+    review_text TEXT,
+    review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_verified_purchase BOOLEAN DEFAULT FALSE,
+    helpful_votes INT DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    UNIQUE KEY unique_customer_product (customer_id, product_id),
+    INDEX idx_product (product_id),
+    INDEX idx_customer (customer_id),
+    INDEX idx_rating (rating)
+);
